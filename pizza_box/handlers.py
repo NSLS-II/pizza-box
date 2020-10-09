@@ -1,6 +1,5 @@
 from databroker.assets.handlers_base import HandlerBase
 
-
 class APBBinFileHandler(HandlerBase):
     "Read electrometer *.bin files"
 
