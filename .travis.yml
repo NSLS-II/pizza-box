@@ -9,7 +9,11 @@ jobs:
       env: FLAKE_8=true
     - python: 3.7
     - python: 3.8
-      env: BUILD_DOCS=true SUBMIT_CODECOV=true
+      env:
+        - BUILD_DOCS=true
+        - SUBMIT_CODECOV=true
+        # Doctr deploy key for NSLS-II/pizza-box
+        - secure: "MTw86+LsKdoWzcn4Yl5sUQbvBeMci7hqu0VKmT/f/RKDxc7qBvNRcoh3cWYIPOSiMkN3bUeUZ12AioXnSNDwh2kz3aWCWvCsFAxnFu28ePyAmsqI5eIsHADnfa11XkwQzKOAcLCCcDZ4Rn9GCkLZ43UZ2ghOGw6K4xGNJsPGTi5WfTyzQ24+0aqh5f5H0sD3ZBCvjm2L4Bi7wbnSQLlBgvu/eyG9U/iExsLp0xST4fO1Bn6Pa5MTsFHCLwrmeEk5YSS+WBVAwdKbdVvMJv1RBYKFk04zBqXOqhGS/YaErjRlvJ5XqicnTtbRr2xzZljsdOQTbqZJXRnlu4EK8ns1QAwP3bNtXt90T3/wEmSZjajdyZPfLczDrt7BLqUdTwJ00BYRauahfXrnJtYAZnzObic7N3q2tTbMK0tLBressHt1373d6fWnC6gAIJ3/+sUyqTfTwjnwtPoNb7zYIMw/S+73C9APOfEngpZD41bGT14eqcOZywsQFWuAHkMWJI03PguMYg0MjhnuJ0Ozk81iY0vNyBMZ2W+N8LPqtn6aC/5Iwt/ynGCPZZl6x/mFwhBfFqTLtR3U2SgGXbrkd3krWA1jMog0csBH7tp9YkePRxPSHDj096kE8MI7ZsOf6CGEjogHKN3nz/hD/iXayNi/0dYFnhkwv4ZyhJ0QxEU8CTs="
 
 cache:
   directories:
