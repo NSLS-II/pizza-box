@@ -24,7 +24,7 @@ pip install --upgrade pip
 
 here = path.abspath(path.dirname(__file__))
 
-with open(path.join(here, 'README.rst'), encoding='utf-8') as readme_file:
+with open(path.join(here, 'README.md'), encoding='utf-8') as readme_file:
     readme = readme_file.read()
 
 with open(path.join(here, 'requirements.txt')) as requirements_file:
@@ -39,6 +39,7 @@ setup(
     cmdclass=versioneer.get_cmdclass(),
     description="Ophyd classes for pizza-box hardware",
     long_description=readme,
+    long_description_content_type='text/markdown',
     author="Brookhaven National Laboratory",
     author_email='',
     url='https://github.com/NSLS-II/pizza-box',
@@ -58,7 +59,7 @@ setup(
         ]
     },
     install_requires=requirements,
-    license="BSD (3-clause)",
+    license="BSD-3-Clause",
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Natural Language :: English',
