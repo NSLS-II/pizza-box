@@ -1,4 +1,9 @@
+import os
+
+import numpy as np
+import pandas as pd
 from databroker.assets.handlers_base import HandlerBase
+
 
 class APBBinFileHandler(HandlerBase):
     "Read electrometer *.bin files"
@@ -12,11 +17,11 @@ class APBBinFileHandler(HandlerBase):
             content = [x.strip() for x in content]
 
         _ = int(content[0].split(":")[1])
-        Gains = [int(x) for x in content[1].split(":")[1].split(",")]
-        Offsets = [int(x) for x in content[2].split(":")[1].split(",")]
-        FAdiv = float(content[3].split(":")[1])
-        FArate = float(content[4].split(":")[1])
-        trigger_timestamp = float(content[5].split(":")[1].strip().replace(",", "."))
+        # Gains = [int(x) for x in content[1].split(":")[1].split(",")]
+        # Offsets = [int(x) for x in content[2].split(":")[1].split(",")]
+        # FAdiv = float(content[3].split(":")[1])
+        # FArate = float(content[4].split(":")[1])
+        # trigger_timestamp = float(content[5].split(":")[1].strip().replace(",", "."))
 
         raw_data = np.fromfile(fpath, dtype=np.int32)
 

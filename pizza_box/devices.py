@@ -5,11 +5,13 @@ import time as ttime
 import uuid
 from collections import deque
 
-import numpy as np
 import paramiko
-from ophyd import Component as Cpt, Device, EpicsSignal, Kind
+from ophyd import Component as Cpt
+from ophyd import Device, EpicsSignal, Kind
 from ophyd.sim import NullStatus
 from ophyd.status import SubscriptionStatus
+
+ROOT_PATH = os.getenv("ROOT_PATH", None)
 
 
 class AnalogPizzaBox(Device):
@@ -206,16 +208,17 @@ class AnalogPizzaBoxStream(AnalogPizzaBoxAverage):
 
     def unstage(self, *args, **kwargs):
         self._datum_counter = None
-        st = self.stream.set(0)
+        self.stream.put(0)
         super().unstage(*args, **kwargs)
 
-    def calc_num_points(self):
-        tr = trajectory_manager(hhm)
-        info = tr.read_info(silent=True)
-        lut = str(int(hhm.lut_number_rbv.get()))
-        traj_duration = int(info[lut]["size"]) / 16000
-        acq_num_points = traj_duration * self.acq_rate.get() * 1000 * 1.3
-        self.num_points = int(round(acq_num_points, ndigits=-3))
+    # TODO: implement it on the profile_collection side.
+    # def calc_num_points(self):
+    #     tr = trajectory_manager(hhm)
+    #     info = tr.read_info(silent=True)
+    #     lut = str(int(hhm.lut_number_rbv.get()))
+    #     traj_duration = int(info[lut]["size"]) / 16000
+    #     acq_num_points = traj_duration * self.acq_rate.get() * 1000 * 1.3
+    #     self.num_points = int(round(acq_num_points, ndigits=-3))
 
 
 # apb_stream = AnalogPizzaBoxStream(prefix="XF:08IDB-CT{PBA:1}:", name="apb_stream")
