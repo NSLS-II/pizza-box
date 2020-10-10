@@ -22,10 +22,11 @@ cache:
 
 before_install:
   - |
+    set -e
     if [ "${FLAKE_8}" == "true" ]; then
         pip install flake8
         flake8 .
-        let res=$?
+        res=$?
         echo "The project code was verified with 'flake8'. Exit code ($res)."
         exit $res
     fi
