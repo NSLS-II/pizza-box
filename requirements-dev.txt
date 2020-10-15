@@ -11,3 +11,5 @@ matplotlib
 numpydoc
 sphinx-copybutton
 sphinx_rtd_theme
+# Missing PIMS dependencies:
+scikit-image

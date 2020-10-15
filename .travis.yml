@@ -1,10 +1,35 @@
+os: linux
+dist: xenial
 language: python
-python:
-  - 3.7
+
+jobs:
+  fast_finish: true
+  include:
+    - python: 3.8  # This build will run only 'flake8'
+      env: FLAKE_8=true
+    - python: 3.7
+    - python: 3.8
+      env:
+        - BUILD_DOCS=true
+        - SUBMIT_CODECOV=true
+        # Doctr deploy key for NSLS-II/pizza-box
+        - secure: "MTw86+LsKdoWzcn4Yl5sUQbvBeMci7hqu0VKmT/f/RKDxc7qBvNRcoh3cWYIPOSiMkN3bUeUZ12AioXnSNDwh2kz3aWCWvCsFAxnFu28ePyAmsqI5eIsHADnfa11XkwQzKOAcLCCcDZ4Rn9GCkLZ43UZ2ghOGw6K4xGNJsPGTi5WfTyzQ24+0aqh5f5H0sD3ZBCvjm2L4Bi7wbnSQLlBgvu/eyG9U/iExsLp0xST4fO1Bn6Pa5MTsFHCLwrmeEk5YSS+WBVAwdKbdVvMJv1RBYKFk04zBqXOqhGS/YaErjRlvJ5XqicnTtbRr2xzZljsdOQTbqZJXRnlu4EK8ns1QAwP3bNtXt90T3/wEmSZjajdyZPfLczDrt7BLqUdTwJ00BYRauahfXrnJtYAZnzObic7N3q2tTbMK0tLBressHt1373d6fWnC6gAIJ3/+sUyqTfTwjnwtPoNb7zYIMw/S+73C9APOfEngpZD41bGT14eqcOZywsQFWuAHkMWJI03PguMYg0MjhnuJ0Ozk81iY0vNyBMZ2W+N8LPqtn6aC/5Iwt/ynGCPZZl6x/mFwhBfFqTLtR3U2SgGXbrkd3krWA1jMog0csBH7tp9YkePRxPSHDj096kE8MI7ZsOf6CGEjogHKN3nz/hD/iXayNi/0dYFnhkwv4ZyhJ0QxEU8CTs="
+
 cache:
   directories:
     - $HOME/.cache/pip
     - $HOME/.ccache  # https://github.com/travis-ci/travis-ci/issues/5853
+
+before_install:
+  - |
+    set -e
+    if [ "${FLAKE_8}" == "true" ]; then
+        pip install flake8
+        flake8 .
+        res=$?
+        echo "The project code was verified with 'flake8'. Exit code ($res)."
+        exit $res
+    fi
 
 install:
   # The versions of pip and numpy that come pre-installed are often too old and
@@ -18,6 +43,16 @@ install:
 script:
   - coverage run -m pytest  # Run the tests and check for test coverage.
   - coverage report -m  # Generate test coverage report.
-  - codecov  # Upload the report to codecov.
-  - flake8  # Enforce code style ('relaxed' line length limit is set in .flake8 config file).
-  - make -C docs html  # Build the documentation.
+  - |
+    set -e
+    if [ "${BUILD_DOCS}" == "true" ]; then
+        make -C docs/ html
+        pip install doctr
+        doctr deploy --built-docs docs/build/html .
+    fi
+
+after_success:
+  - |
+    if [ "${SUBMIT_CODECOV}" == "true" ]; then
+        codecov  # Upload the report to codecov.
+    fi
