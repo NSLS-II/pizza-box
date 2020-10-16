@@ -153,10 +153,13 @@ class AnalogPizzaBoxAverage(AnalogPizzaBox):
 # apb_ave = AnalogPizzaBoxAverage(prefix="XF:08IDB-CT{PBA:1}:", name="apb_ave")
 
 
-class AnalogPizzaBoxStream(AnalogPizzaBoxAverage):
+class AnalogPizzaBoxStream(AnalogPizzaBox):
+    """
+    A class for flying.
+    """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._acquiring = None
         self.ssh = paramiko.SSHClient()
         self.filename_bin = None
         self.filename_txt = None
@@ -165,6 +168,7 @@ class AnalogPizzaBoxStream(AnalogPizzaBoxAverage):
         self._resource_uid = None
         self._datum_counter = None
         self.num_points = None
+        self._datum_ids = None
 
     def collect_asset_docs(self):
         items = list(self._asset_docs_cache)
