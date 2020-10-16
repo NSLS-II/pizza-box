@@ -12,5 +12,4 @@ recursive-include docs *.rst conf.py Makefile make.bat
 include versioneer.py
 include pizza_box/_version.py
 
-# If including data files in the package, add them like:
-# include path/to/data_file
+recursive-include pizza_box tests/example_data/*
