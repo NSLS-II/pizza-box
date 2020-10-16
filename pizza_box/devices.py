@@ -135,6 +135,7 @@ class AnalogPizzaBoxAverage(AnalogPizzaBox):
         SubscriptionStatus
             a Status object that indicates when acquisition is finished
         """
+
         def callback(value, old_value, **kwargs):
             # print(f'{ttime.time()} {old_value} ---> {value}')
             if self._capturing and int(round(old_value)) == 1 and int(round(value)) == 0:
