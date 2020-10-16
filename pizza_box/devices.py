@@ -28,21 +28,6 @@ class AnalogPizzaBox(Device):
     See the subclasses for stepping and flying methods.
     """
 
-    acquire = Cpt(EpicsSignal, "FA:SoftTrig-SP", kind=Kind.omitted)
-    acquiring = Cpt(EpicsSignal, "FA:Busy-I", kind=Kind.omitted)
-
-    data_rate = Cpt(EpicsSignal, "FA:Rate-I")
-    divide = Cpt(EpicsSignal, "FA:Divide-SP")
-    sample_len = Cpt(EpicsSignal, "FA:Samples-SP")
-    wf_len = Cpt(EpicsSignal, "FA:Wfm:Length-SP")
-
-    stream = Cpt(EpicsSignal, "FA:Stream-SP", kind=Kind.omitted)
-    streaming = Cpt(EpicsSignal, "FA:Streaming-I", kind=Kind.omitted)
-    acq_rate = Cpt(EpicsSignal, "FA:Rate-I", kind=Kind.omitted)
-    stream_samples = Cpt(EpicsSignal, "FA:Stream:Samples-SP")
-
-    trig_source = Cpt(EpicsSignal, "Machine:Clk-SP")
-
     polarity = "neg"
 
     """
