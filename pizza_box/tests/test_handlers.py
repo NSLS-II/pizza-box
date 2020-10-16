@@ -25,14 +25,14 @@ def txt_file():
     return txt_file
 
 
-def test_handler_init(bin_file, txt_file):
+def test_handler_init(bin_file):
     h = APBBinFileHandler(bin_file)
 
     assert hasattr(h, "raw_data")
     assert hasattr(h, "df")
 
 
-def test_handler_call(bin_file, txt_file):
+def test_handler_call(bin_file):
     h = APBBinFileHandler(bin_file)
     data = h()
     assert data is not None
