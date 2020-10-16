@@ -200,20 +200,6 @@ class AnalogPizzaBoxStream(AnalogPizzaBox):
         super().stage(*args, **kwargs)
         return st
 
-    def trigger(self):
-        def callback(value, old_value, **kwargs):
-            print(f"{ttime.time()} {old_value} ---> {value}")
-            if self._acquiring and int(round(old_value)) == 1 and int(round(value)) == 0:
-                self._acquiring = False
-                return True
-            else:
-                self._acquiring = True
-                return False
-
-        status = SubscriptionStatus(self.acquiring, callback)
-        self.acquire.set(1)
-        return status
-
     def complete(self, *args, **kwargs):
         self._datum_ids = []
         datum_id = "{}/{}".format(self._resource_uid, next(self._datum_counter))
