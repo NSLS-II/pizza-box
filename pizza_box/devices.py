@@ -15,9 +15,26 @@ ROOT_PATH = os.getenv("ROOT_PATH", None)
 
 
 class AnalogPizzaBox(Device):
+    """
+    A device for reading amplified analog signals and converting them to digital values.
+
+    PizzaBoxes are designed and built by the NSLS-II Diagnostics Group. The AnalogPizzaBox
+    hardware is an upgrade from the initial PizzaBox design.
+
+    An example application is reading ion chamber i_0 (initial current),
+    i_t (transmitted current), and i_r (reflected current).
+
+    This class defines many commonly used PizzaBox PVs but does not define any methods.
+    See the subclasses for stepping and flying methods.
+    """
 
     polarity = "neg"
 
+    """
+    "SA" indicates "slow acquisition". These PVs are averages
+    calculated over a (large) number of data points. The number
+    of points averaged is determined by the SA:Data:Rate-SP PV.
+    """
     ch1 = Cpt(EpicsSignal, "SA:Ch1:mV-I")
     ch2 = Cpt(EpicsSignal, "SA:Ch2:mV-I")
     ch3 = Cpt(EpicsSignal, "SA:Ch3:mV-I")
@@ -72,6 +89,11 @@ class AnalogPizzaBox(Device):
     trig_source = Cpt(EpicsSignal, "Machine:Clk-SP")
 
     def __init__(self, *args, **kwargs):
+        """
+        The PizzaBox IP address is used temporarily for
+        data transfer by ftp. This will be removed in the
+        near future.
+        """
         super().__init__(*args, **kwargs)
         self._IP = "10.8.0.19"
 
@@ -81,7 +103,14 @@ class AnalogPizzaBox(Device):
 
 
 class AnalogPizzaBoxAverage(AnalogPizzaBox):
+    """
+    A class for step scanning.
+    """
 
+    """
+    "FA" indicates "fast acquisition". Reading these PVs returns
+    an array of data.
+    """
     ch1_mean = Cpt(EpicsSignal, "FA:Ch1:Mean-I", kind=Kind.hinted)
     ch2_mean = Cpt(EpicsSignal, "FA:Ch2:Mean-I", kind=Kind.hinted)
     ch3_mean = Cpt(EpicsSignal, "FA:Ch3:Mean-I", kind=Kind.hinted)
@@ -97,6 +126,16 @@ class AnalogPizzaBoxAverage(AnalogPizzaBox):
         self._ready_to_collect = False
 
     def trigger(self):
+        """
+        Set the acquire PV to 1 and wait for the acquiring PV
+        to go from high (1) to low (0).
+
+        Return
+        ------
+        SubscriptionStatus
+            a Status object that indicates when acquisition is finished
+        """
+
         def callback(value, old_value, **kwargs):
             # print(f'{ttime.time()} {old_value} ---> {value}')
             if self._capturing and int(round(old_value)) == 1 and int(round(value)) == 0:
@@ -115,10 +154,13 @@ class AnalogPizzaBoxAverage(AnalogPizzaBox):
 # apb_ave = AnalogPizzaBoxAverage(prefix="XF:08IDB-CT{PBA:1}:", name="apb_ave")
 
 
-class AnalogPizzaBoxStream(AnalogPizzaBoxAverage):
+class AnalogPizzaBoxStream(AnalogPizzaBox):
+    """
+    A class for flying.
+    """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._acquiring = None
         self.ssh = paramiko.SSHClient()
         self.filename_bin = None
         self.filename_txt = None
@@ -127,6 +169,7 @@ class AnalogPizzaBoxStream(AnalogPizzaBoxAverage):
         self._resource_uid = None
         self._datum_counter = None
         self.num_points = None
+        self._datum_ids = None
 
     def collect_asset_docs(self):
         items = list(self._asset_docs_cache)
@@ -157,20 +200,6 @@ class AnalogPizzaBoxStream(AnalogPizzaBoxAverage):
         st = self.trig_source.set(1)
         super().stage(*args, **kwargs)
         return st
-
-    def trigger(self):
-        def callback(value, old_value, **kwargs):
-            print(f"{ttime.time()} {old_value} ---> {value}")
-            if self._acquiring and int(round(old_value)) == 1 and int(round(value)) == 0:
-                self._acquiring = False
-                return True
-            else:
-                self._acquiring = True
-                return False
-
-        status = SubscriptionStatus(self.acquiring, callback)
-        self.acquire.set(1)
-        return status
 
     def complete(self, *args, **kwargs):
         self._datum_ids = []
