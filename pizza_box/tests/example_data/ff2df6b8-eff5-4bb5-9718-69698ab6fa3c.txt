@@ -1,0 +1,6 @@
+Number of Samples Requested: 30500
+Channel Gains: 15944,15973,15937,16060,17257,15951,17238,17237
+Channel Offsets: -6671,-6605,-6231,-6359,-6338,-6401,-6288,-6666
+FA Divide Setting: 375
+FA Date Rate:  0.99984
+Trigger Timestamp: 1598288231,88200295
